@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Make the app fill the window */
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #0b0b0d; /* bg-bg */
+}

@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  connections BankConnection[]
+  categories  Category[]
+  budgets     Budget[]
+ imports     ImportBatch[]
+  rules       Rule[]
+
+}
+
+model BankConnection {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  provider      String   // "gocardless"
+  requisitionId String   @unique
+  institutionId String
+  status        String   @default("CREATED")
+  lastSyncAt    DateTime?
+
+  accounts      Account[]
+  createdAt     DateTime @default(now())
+}
+
+model Account {
+  id                String @id @default(cuid())
+  userId            String
+
+  connectionId      String?
+  connection        BankConnection? @relation(fields: [connectionId], references: [id])
+
+  providerAccountId String @unique
+  name              String?
+  currency          String?
+  transactions      Transaction[]
+}
+
+model Category {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  name   String
+}
+
+model Transaction {
+  id           String   @id @default(cuid())
+  accountId    String
+  account      Account  @relation(fields: [accountId], references: [id])
+
+  providerTxId String
+  date         DateTime
+  amount       Decimal
+  currency     String
+  label        String
+
+  categoryId   String?
+  createdAt    DateTime @default(now())
+
+  @@unique([accountId, providerTxId])
+}
+
+model Budget {
+  id          String  @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id])
+
+  month       String  // "2026-01"
+  categoryId  String
+  limitAmount Decimal
+}
+
+model ImportBatch {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  filename  String
+  createdAt DateTime @default(now())
+
+  transactionsImported Int @default(0)
+}
+
+model Rule {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  pattern    String   // ex: "CARREFOUR"
+  categoryId String   // id Category à appliquer
+  isEnabled  Boolean  @default(true)
+
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+}

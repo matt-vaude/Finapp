@@ -1,0 +1,12 @@
+# --- Données perso (CSV bancaires)
+apps/api/csv/
+apps/api/csv/**
+
+# (optionnel) logs
+*.log
+
+# (optionnel) node
+node_modules/
+dist/
+.env
+.env.*
