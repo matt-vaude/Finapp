@@ -1,13 +1,11 @@
 {
-  "name": "finance-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "finapp",
+  "private": true,
+  "packageManager": "pnpm@10.27.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.27.0"
+    "install:all": "pnpm -r install",
+    "dev:api": "pnpm --filter ./apps/api dev",
+    "dev:web": "pnpm --filter ./apps/web dev",
+    "dev": "pnpm -r --parallel dev"
+  }
 }
